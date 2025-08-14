@@ -1,1 +1,8 @@
-"""Application package for FastAPI server."""
+"""FastAPI application for MiniGPTChess."""
+
+from fastapi import FastAPI
+
+from .routes import router
+
+app = FastAPI()
+app.include_router(router)
