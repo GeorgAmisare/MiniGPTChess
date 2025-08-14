@@ -1,8 +1,17 @@
 """Приложение FastAPI с эндпоинтом проверки состояния."""
 
+import sys
+from pathlib import Path
+
 from fastapi import FastAPI
 
-from .routes import router
+# Добавляем корневую директорию проекта в путь поиска модулей
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from logging_config import setup_logging  # noqa: E402
+
+from .routes import router  # noqa: E402
+
+setup_logging()
 
 app = FastAPI()
 app.include_router(router)

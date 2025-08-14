@@ -5,6 +5,7 @@
 
 import os
 import pytest
+import pygame
 
 from client.main import (
     Board,
@@ -20,6 +21,7 @@ from client.main import (
 )
 
 pygame = pytest.importorskip("pygame")
+
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 
 

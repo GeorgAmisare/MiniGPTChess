@@ -38,6 +38,7 @@
 
 * Before starting — verify the task aligns with the architecture and technical plan.
 * After completion — ensure changes don’t break API/data formats.
+* Ensure the project passes `flake8` before submitting changes.
 * Code should be understandable to a new developer without additional explanation.
 * Each new feature should have a short description in README.
 * Single repository — both client and server are maintained in the same repository, sharing a single README that describes the entire project.
