@@ -147,7 +147,9 @@ def main() -> None:
                 "client_move": move,
             }
             logger.info("Отправка хода: %s", payload)
-            response = httpx.post(f"{SERVER_URL}/move", json=payload)
+            response = httpx.post(
+                f"{SERVER_URL}/move", json=payload, timeout=30.0
+            )
             data = response.json()
             logger.info("Ответ сервера: %s", data)
             if data.get("new_fen"):
