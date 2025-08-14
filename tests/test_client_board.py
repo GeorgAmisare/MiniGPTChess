@@ -1,6 +1,4 @@
 import os
-os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
-
 import pygame
 
 from client.main import (
@@ -15,6 +13,8 @@ from client.main import (
     WINDOW_SIZE,
     SQUARE_SIZE,
 )
+
+os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 
 
 def test_coords_roundtrip() -> None:
@@ -42,6 +42,10 @@ def test_draw_board_colors() -> None:
     draw_board(screen, board, last_move=[(0, 1)], selected=(1, 1))
     assert screen.get_at((1, 1))[:3] == WHITE
     assert screen.get_at((SQUARE_SIZE + 1, 1))[:3] == LAST_MOVE_COLOR
-    assert screen.get_at((SQUARE_SIZE * 3 + 1, 1))[:3] == BROWN
-    assert screen.get_at((SQUARE_SIZE + 1, SQUARE_SIZE + 1))[:3] == SELECT_COLOR
+    assert screen.get_at(
+        (SQUARE_SIZE * 3 + 1, 1)
+    )[:3] == BROWN
+    assert screen.get_at(
+        (SQUARE_SIZE + 1, SQUARE_SIZE + 1)
+    )[:3] == SELECT_COLOR
     pygame.quit()
