@@ -56,11 +56,22 @@ uvicorn server.app:app --reload
   "flags": {
     "check": false,
     "checkmate": false,
-    "stalemate": false
+    "stalemate": false,
+    "insufficient_material": false,
+    "seventyfive_moves": false,
+    "fivefold_repetition": false
   },
   "errors": []
 }
 ```
+
+### Коды ошибок
+
+- `illegal_client_move` — клиент отправил некорректный или запрещённый ход;
+- `no_legal_moves` — отсутствуют легальные ходы;
+- `invalid_fen` — некорректная строка FEN;
+- `gpt_invalid_move` — модель GPT вернула недопустимый ход;
+- `server_error` — внутренняя ошибка сервера.
 
 ## Запуск клиента
 
@@ -75,4 +86,3 @@ python client/main.py
 ```bash
 pytest
 ```
-

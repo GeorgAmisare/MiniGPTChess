@@ -1,56 +1,56 @@
-"""Chess logic utilities for move validation and game state evaluation."""
+"""Утилиты шахматной логики для проверки ходов и оценки состояния игры."""
 
 from __future__ import annotations
 
-from typing import List, Optional, Tuple, Dict
+from typing import Dict, List, Optional, Tuple
 
 import chess
 
+from .models import ErrorCode
 
-def validate_and_apply_move(fen: str, move: str) -> Tuple[Optional[chess.Board], List[str]]:
-    """Validate a UCI move and apply it to a board described by ``fen``.
+
+def validate_and_apply_move(fen: str, move: str) -> Tuple[Optional[chess.Board], List[ErrorCode]]:
+    """Проверить ход в формате UCI и применить его к позиции ``fen``.
 
     Parameters
     ----------
     fen: str
-        Current game state in Forsyth-Edwards Notation.
+        Текущее состояние игры в нотации FEN.
     move: str
-        Move in UCI notation (e.g. ``"e2e4"``).
+        Ход в формате UCI (например, ``"e2e4"``).
 
     Returns
     -------
     tuple
-        ``(board, errors)`` where ``board`` is the updated ``chess.Board`` on
-        success (``None`` if validation fails) and ``errors`` contains any
-        validation error messages.
+        ``(board, errors)``: ``board`` — обновлённый ``chess.Board`` при успехе
+        (``None`` при ошибке), ``errors`` — список кодов ошибок.
     """
 
-    errors: List[str] = []
+    errors: List[ErrorCode] = []
 
     try:
         board = chess.Board(fen)
     except ValueError:
-        return None, ["invalid FEN"]
+        return None, [ErrorCode.INVALID_FEN]
 
     try:
         uci_move = chess.Move.from_uci(move)
     except ValueError:
-        return None, ["invalid move format"]
+        return None, [ErrorCode.ILLEGAL_CLIENT_MOVE]
 
     if uci_move not in board.legal_moves:
-        return None, ["illegal move"]
+        return None, [ErrorCode.ILLEGAL_CLIENT_MOVE]
 
     board.push(uci_move)
-    # Recalculate FEN to keep board state consistent after the move.
     board.fen()
 
     return board, errors
 
 
 def compute_game_flags(board: chess.Board) -> Dict[str, bool]:
-    """Return a mapping of game state flags for ``board``.
+    """Получить словарь флагов состояния игры для позиции ``board``.
 
-    The flags include common terminal conditions as well as simple checks.
+    Флаги включают распространённые терминальные условия и простые проверки.
     """
 
     return {

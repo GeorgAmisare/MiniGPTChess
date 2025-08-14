@@ -1,34 +1,48 @@
-"""Pydantic models for MiniGPTChess server."""
+"""Pydantic-схемы для сервера MiniGPTChess."""
 
+from enum import Enum
 from typing import List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
 
-class MoveRequest(BaseModel):
-    """Client move request."""
+class ErrorCode(str, Enum):
+    """Коды возможных ошибок при обработке хода."""
 
-    fen: str = Field(..., description="Board position in FEN")
+    ILLEGAL_CLIENT_MOVE = "illegal_client_move"
+    NO_LEGAL_MOVES = "no_legal_moves"
+    INVALID_FEN = "invalid_fen"
+    GPT_INVALID_MOVE = "gpt_invalid_move"
+    SERVER_ERROR = "server_error"
+
+
+class MoveRequest(BaseModel):
+    """Запрос хода от клиента."""
+
+    fen: str = Field(..., description="Позиция на доске в формате FEN")
     side: Literal["w", "b"]
     client_move: Optional[str] = Field(
-        None, description="Player move in UCI format"
+        None, description="Ход игрока в формате UCI"
     )
 
 
 class Flags(BaseModel):
-    """Status flags for current board."""
+    """Флаги состояния текущей позиции."""
 
     check: bool
     checkmate: bool
     stalemate: bool
+    insufficient_material: bool
+    seventyfive_moves: bool
+    fivefold_repetition: bool
 
 
 class MoveResponse(BaseModel):
-    """Server response to a move request."""
+    """Ответ сервера на запрос хода."""
 
     status: str = "ok"
     applied_client_move: bool
     ai_move: Optional[str]
     new_fen: str
     flags: Flags
-    errors: List[str] = Field(default_factory=list)
+    errors: List[ErrorCode] = Field(default_factory=list)

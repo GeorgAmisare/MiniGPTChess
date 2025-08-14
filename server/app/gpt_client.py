@@ -1,3 +1,5 @@
+"""Клиент для обращения к OpenAI и получения хода ИИ."""
+
 import os
 import random
 import logging
@@ -12,19 +14,18 @@ _MODEL = "gpt-4o-mini"
 
 
 def get_ai_move(fen: str, legal_moves: List[str]) -> str:
-    """Return an AI move for the given position.
+    """Вернуть ход ИИ для заданной позиции.
 
     Parameters
     ----------
     fen: str
-        Board state in Forsyth–Edwards Notation.
+        Состояние доски в нотации FEN.
     legal_moves: List[str]
-        List of legal moves in UCI format.
+        Список легальных ходов в формате UCI.
 
-    The function queries the OpenAI Responses API, checking that the
-    returned move is in ``legal_moves``. Up to two retries are
-    performed. If the API call fails or a valid move is not returned,
-    a random legal move is selected.
+    Функция обращается к OpenAI Responses API и проверяет, что полученный
+    ход присутствует в ``legal_moves``. Выполняется до трёх попыток. При
+    ошибке API или отсутствии корректного ответа выбирается случайный ход.
     """
     if not fen:
         raise ValueError("FEN must be provided")
@@ -44,7 +45,7 @@ def get_ai_move(fen: str, legal_moves: List[str]) -> str:
             response = _client.responses.create(model=_MODEL, input=prompt)
             ai_move = response.output[0].content[0].text.strip()
         except Exception as exc:  # noqa: BLE001
-            logger.error("OpenAI API error: %s", exc)
+            logger.error("Ошибка OpenAI API: %s", exc)
             break
         if ai_move in legal_moves:
             return ai_move
