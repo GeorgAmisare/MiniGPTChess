@@ -40,6 +40,7 @@
 * After completion — ensure changes don’t break API/data formats.
 * Code should be understandable to a new developer without additional explanation.
 * Each new feature should have a short description in README.
+* Single repository — both client and server are maintained in the same repository, sharing a single README that describes the entire project.
 
 ---
 
@@ -102,28 +103,14 @@ flowchart LR
 4. Process GPT response; retry if format is invalid; fallback if necessary.
 5. Apply AI move and return the new state.
 
----
 
 ## 5) Minimal Contract
 
 * Move format: **UCI** only (`e2e4`, `e7e8q`, `e1g1`, etc.), including `resign`, `draw`.
 * The server always returns the new FEN.
 
----
 
 ## 6) Security
 
 * GPT key is stored only on the server.
 * For MVP — run on a local PC or via tunnel (ngrok/Cloudflared).
-
----
-
-## 7) Next Steps
-
-1. Initialize repository.
-2. Install dependencies.
-3. Implement `/move`.
-4. Add validation and GPT response correctness tests.
-5. Implement PyGame client.
-6. Handle game states.
-7. Add game control buttons.
