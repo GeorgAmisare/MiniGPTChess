@@ -19,20 +19,31 @@ server/app/    # FastAPI сервер и логика игры
 tests/         # тесты утилит
 ```
 
-## Установка зависимостей
+## Установка
 
 ```bash
-pip install fastapi uvicorn python-chess pygame httpx openai pydantic
+pip install -r requirements-server.txt
+pip install -r requirements-client.txt
 ```
 
-## Запуск сервера
+## Переменные окружения
+
+Создайте файл `.env` на основе `.env.example` и укажите ключ:
 
 ```bash
-export OPENAI_API_KEY=<ваш ключ>
-uvicorn server.app:app --reload
+cp .env.example .env
+# заполните OPENAI_API_KEY=<ваш ключ>
 ```
 
-### Эндпоинты
+## Запуск
+
+### Сервер
+
+```bash
+uvicorn server.app:app --reload --env-file .env
+```
+
+#### Эндпоинты
 
 - `GET /health` — проверка работоспособности.
 - `POST /move` — применяет ход игрока и возвращает ход ИИ.
@@ -79,13 +90,13 @@ uvicorn server.app:app --reload
 - `gpt_invalid_move` — модель GPT вернула недопустимый ход;
 - `server_error` — внутренняя ошибка сервера.
 
-## Запуск клиента
+### Клиент
 
 ```bash
 python client/main.py
 ```
 
-Клиент отображает шахматную доску в стартовой позиции и может быть расширен для взаимодействия с сервером.
+Клиент отображает шахматную доску в стартовой позиции и взаимодействует с сервером для обмена ходами.
 
 ## Тестирование
 
