@@ -19,9 +19,9 @@
 * **Small functions** — keep functions under 20–30 lines; avoid “god functions”.
 * **Clear structure** — modules and files should have a clear purpose; folder structure should reflect application logic.
 * **Comments and docstrings**:
-
   * Brief description of each function: inputs, outputs, purpose.
   * Explanation of complex algorithms.
+  * All comments and docstrings must be written in Russian.
 * **Minimal “magic”** — avoid obscure or overly clever constructs.
 * **Input validation** — check all inputs before passing to business logic.
 * **Always validate moves** — before applying, ensure the move matches UCI format and is legal according to `python-chess`.
@@ -41,6 +41,8 @@
 * Code should be understandable to a new developer without additional explanation.
 * Each new feature should have a short description in README.
 * Single repository — both client and server are maintained in the same repository, sharing a single README that describes the entire project.
+* When you create a text for PR, write it in Russian.
+* When updating the README.MD, write in Russian in it.
 
 ---
 
