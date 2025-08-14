@@ -1,4 +1,4 @@
-"""Pytest fixtures for server tests."""
+"""Фикстуры pytest для тестов сервера."""
 
 import pytest
 from fastapi.testclient import TestClient
@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 def client():
     """Предоставить ``TestClient`` для приложения FastAPI."""
     try:
-        from server.main import app
+        from server.app.main import app
     except Exception:  # pragma: no cover
-        pytest.skip("server.main.app not available")
+        pytest.skip("server.app.main.app недоступно")
     return TestClient(app)

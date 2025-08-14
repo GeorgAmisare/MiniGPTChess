@@ -1,13 +1,19 @@
 """Тесты обнаружения шахматных окончаний."""
 
+from fastapi.testclient import TestClient
 
-def test_checkmate_detection(monkeypatch, client):
+
+def test_checkmate_detection(monkeypatch):
     """Ход ИИ, приводящий к мату, должен установить флаг."""
 
     def fake_gpt(*args, **kwargs):  # pragma: no cover
         return "d8h4"
 
+    monkeypatch.setattr("server.app.gpt_client.get_ai_move", fake_gpt)
     monkeypatch.setattr("server.app.routes.get_ai_move", fake_gpt)
+    from server.app.main import app
+
+    client = TestClient(app)
     payload = {
         "fen": "rnbqkbnr/pppp1ppp/8/4p3/6P1/5P2/PPPPP2P/RNBQKBNR b KQkq - 0 2",
         "side": "b",
@@ -17,7 +23,14 @@ def test_checkmate_detection(monkeypatch, client):
     data = response.json()
     assert data["status"] == "ok"
     assert data["errors"] == []
-    assert data["flags"]["checkmate"] is True
+    assert data["flags"] == {
+        "check": True,
+        "checkmate": True,
+        "stalemate": False,
+        "insufficient_material": False,
+        "seventyfive_moves": False,
+        "fivefold_repetition": False,
+    }
 
 
 def test_stalemate_detection(client):
@@ -32,4 +45,11 @@ def test_stalemate_detection(client):
     data = response.json()
     assert data["status"] == "error"
     assert data["errors"] == ["no_legal_moves"]
-    assert data["flags"]["stalemate"] is True
+    assert data["flags"] == {
+        "check": False,
+        "checkmate": False,
+        "stalemate": True,
+        "insufficient_material": False,
+        "seventyfive_moves": False,
+        "fivefold_repetition": False,
+    }
