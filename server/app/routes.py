@@ -10,6 +10,12 @@ from .gpt_client import get_ai_move
 router = APIRouter()
 
 
+@router.post("/new")
+async def new_game() -> dict[str, str]:
+    """Создать новую игру и вернуть стартовый FEN."""
+    return {"fen": chess.STARTING_FEN, "side": "w"}
+
+
 @router.post("/move", response_model=MoveResponse)
 async def move(request: MoveRequest) -> MoveResponse:
     """Обработать ход клиента и вернуть ответ ИИ."""
