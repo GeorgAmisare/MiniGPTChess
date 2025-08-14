@@ -1,3 +1,4 @@
+````markdown
 # MiniGPTChess
 
 This repository hosts a minimal chess application exploring GPT-generated moves.
@@ -5,6 +6,18 @@ This repository hosts a minimal chess application exploring GPT-generated moves.
 Server uses the OpenAI Responses API to select AI moves. Set the
 `OPENAI_API_KEY` environment variable before running the server. If the
 API call fails or returns an invalid move, a random legal move is used.
+
+## Client
+
+`client/main.py` opens a PyGame window and renders a chess board using
+Unicode pieces. The board state is stored as a FEN string so it can be
+updated after each move.
+
+Run the client:
+
+```bash
+python client/main.py
+````
 
 ## Server
 
@@ -24,3 +37,7 @@ computes game state flags such as checkmate or stalemate.
 
 ```bash
 python -m server.app.main
+```
+
+```
+```
