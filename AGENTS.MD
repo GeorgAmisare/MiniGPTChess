@@ -41,6 +41,7 @@
 * Code should be understandable to a new developer without additional explanation.
 * Each new feature should have a short description in README.
 * Single repository — both client and server are maintained in the same repository, sharing a single README that describes the entire project.
+* When you create a text for PR, write it in English.
 
 ---
 
