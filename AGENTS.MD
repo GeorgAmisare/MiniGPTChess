@@ -46,6 +46,13 @@
 * When updating the README.MD, write it in Russian.
 *The final message from the assistant must exactly match the description of the Pull Request.
 
+## Testing
+
+* Run `pytest` before committing and make sure all tests pass.
+* Client tests live in `tests/client`, server tests in `tests/server`. When adding new logic, place tests in the proper folder and keep this structure.
+* Update tests whenever you change code covered by them.
+* Always add tests for new scripts and modules.
+
 ---
 
 # Technical Plan
