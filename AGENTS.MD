@@ -43,6 +43,7 @@
 * Single repository — both client and server are maintained in the same repository, sharing a single README that describes the entire project.
 * When you create a text for PR, write it in Russian.
 * When updating the README.MD, write it in Russian.
+*The final message from the assistant must exactly match the description of the Pull Request.
 
 ---
 
