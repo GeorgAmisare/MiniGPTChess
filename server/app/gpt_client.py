@@ -47,7 +47,10 @@ def get_ai_move(fen: str, legal_moves: List[str]) -> str:
 
     if _client is None:
         move = random.choice(legal_moves)
-        logger.info("Клиент OpenAI не настроен, выбран случайный ход: %s", move)
+        logger.info(
+            "Клиент OpenAI не настроен, выбран случайный ход: %s",
+            move,
+        )
         return move
 
     for _ in range(_MAX_RETRIES):
