@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  lint-and-test:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Получение кода
@@ -16,8 +16,36 @@ jobs:
           python-version: '3.12'
       - name: Установка зависимостей
         run: |
-          pip install -r requirements-server.txt -r requirements-client.txt flake8 pytest
+          pip install -r requirements-server.txt -r requirements-client.txt flake8
       - name: Запуск flake8
         run: flake8 .
-      - name: Запуск pytest
-        run: pytest
+
+  test-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Получение кода
+        uses: actions/checkout@v4
+      - name: Установка Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Установка зависимостей
+        run: |
+          pip install -r requirements-server.txt pytest
+      - name: Запуск тестов сервера
+        run: pytest tests/server
+
+  test-client:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Получение кода
+        uses: actions/checkout@v4
+      - name: Установка Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Установка зависимостей
+        run: |
+          pip install -r requirements-client.txt pytest
+      - name: Запуск тестов клиента
+        run: pytest tests/client
