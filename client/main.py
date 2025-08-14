@@ -7,6 +7,9 @@ from typing import Iterable
 
 import httpx
 import pygame
+import logging
+
+from logging_config import setup_logging
 
 WHITE = (240, 217, 181)
 BROWN = (181, 136, 99)
@@ -33,6 +36,9 @@ UNICODE_PIECES = {
     "n": "\u265E",
     "p": "\u265F",
 }
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 class Board:
@@ -130,6 +136,7 @@ def main() -> None:
     last_move: list[tuple[int, int]] | None = None
     message = ""
     waiting = False
+    logger.info("Клиент запущен")
 
     def send_move(move: str) -> None:
         """Отправить ход на сервер и обработать ответ."""
@@ -140,10 +147,12 @@ def main() -> None:
                 "side": board.side,
                 "client_move": move,
             }
+            logger.info("Отправка хода: %s", payload)
             response = httpx.post(
                 f"{SERVER_URL}/move", json=payload, timeout=REQUEST_TIMEOUT
             )
             data = response.json()
+            logger.info("Ответ сервера: %s", data)
             if data.get("new_fen"):
                 board.set_fen(data["new_fen"])
             if data.get("ai_move"):
@@ -152,6 +161,10 @@ def main() -> None:
                 last_move = list(uci_to_coords(move))
             flags = [k for k, v in data.get("flags", {}).items() if v]
             errors = data.get("errors", [])
+            if flags:
+                logger.info("Флаги от сервера: %s", flags)
+            if errors:
+                logger.warning("Ошибки от сервера: %s", errors)
             parts = []
             if flags:
                 parts.append("Флаги: " + ", ".join(flags))
@@ -159,6 +172,7 @@ def main() -> None:
                 parts.append("Ошибки: " + ", ".join(errors))
             message = " | ".join(parts)
         except Exception as exc:  # pragma: no cover - сетевые ошибки
+            logger.error("Ошибка запроса: %s", exc)
             message = f"Ошибка запроса: {exc}"
         waiting = False
 
@@ -177,6 +191,7 @@ def main() -> None:
                     selected = (row, col)
                 else:
                     move = coords_to_uci(*selected) + coords_to_uci(row, col)
+                    logger.info("Ход игрока: %s", move)
                     waiting = True
                     threading.Thread(
                         target=send_move,
