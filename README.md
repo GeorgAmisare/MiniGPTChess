@@ -2,6 +2,10 @@
 
 This repository hosts a minimal chess application exploring GPT-generated moves.
 
+Server uses the OpenAI Responses API to select AI moves. Set the
+`OPENAI_API_KEY` environment variable before running the server. If the
+API call fails or returns an invalid move, a random legal move is used.
+
 ## Server
 
 Pydantic models for the `/move` endpoint live in `server/app/schemas.py`. They define
@@ -20,8 +24,3 @@ computes game state flags such as checkmate or stalemate.
 
 ```bash
 python -m server.app.main
-```
-
-### Endpoints
-
-- `GET /health` — return service status.
