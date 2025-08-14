@@ -46,7 +46,9 @@ def get_ai_move(fen: str, legal_moves: List[str]) -> str:
     )
 
     if _client is None:
-        return random.choice(legal_moves)
+        move = random.choice(legal_moves)
+        logger.info("Клиент OpenAI не настроен, выбран случайный ход: %s", move)
+        return move
 
     for _ in range(_MAX_RETRIES):
         try:
@@ -55,6 +57,9 @@ def get_ai_move(fen: str, legal_moves: List[str]) -> str:
         except Exception as exc:  # noqa: BLE001
             logger.error("Ошибка OpenAI API: %s", exc)
             break
+        logger.info("Ответ GPT: %s", ai_move)
         if ai_move in legal_moves:
             return ai_move
-    return random.choice(legal_moves)
+    move = random.choice(legal_moves)
+    logger.info("Использован резервный случайный ход: %s", move)
+    return move

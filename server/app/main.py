@@ -1,8 +1,11 @@
 """Приложение FastAPI с эндпоинтом проверки состояния."""
 
+from logging_config import setup_logging
 from fastapi import FastAPI
 
 from .routes import router
+
+setup_logging()
 
 app = FastAPI()
 app.include_router(router)
