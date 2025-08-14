@@ -1,4 +1,4 @@
-"""FastAPI application providing health check endpoint."""
+"""Приложение FastAPI с эндпоинтом проверки состояния."""
 
 from fastapi import FastAPI
 
@@ -7,7 +7,7 @@ app = FastAPI()
 
 @app.get("/health")
 async def health() -> dict[str, str]:
-    """Return service health status."""
+    """Вернуть статус работоспособности сервиса."""
     return {"status": "ok"}
 
 

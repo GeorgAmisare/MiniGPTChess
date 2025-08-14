@@ -1,4 +1,4 @@
-"""FastAPI application for MiniGPTChess."""
+"""Приложение FastAPI для MiniGPTChess."""
 
 from fastapi import FastAPI
 

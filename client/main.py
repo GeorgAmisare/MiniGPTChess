@@ -1,4 +1,4 @@
-"""PyGame client for displaying a chess board from a FEN string."""
+"""Клиент PyGame для отображения шахматной доски по строке FEN."""
 
 from __future__ import annotations
 
@@ -28,19 +28,19 @@ UNICODE_PIECES = {
 
 
 class Board:
-    """Maintain chess board state using a FEN string."""
+    """Хранит состояние доски на основе строки FEN."""
 
     def __init__(self, fen: str = START_FEN) -> None:
         self.set_fen(fen)
 
     def set_fen(self, fen: str) -> None:
-        """Update the board from a FEN string."""
+        """Обновить доску из строки FEN."""
         self.fen = fen
         self._grid = self._fen_to_grid(fen)
 
     @staticmethod
     def _fen_to_grid(fen: str) -> list[list[str]]:
-        """Convert FEN piece placement to a 2D array."""
+        """Преобразовать размещение фигур FEN в двумерный массив."""
         rows = fen.split()[0].split("/")
         grid: list[list[str]] = []
         for row in rows:
@@ -54,12 +54,12 @@ class Board:
         return grid
 
     def piece_at(self, row: int, col: int) -> str:
-        """Return piece letter at given coordinates or empty string."""
+        """Вернуть обозначение фигуры по координатам или пустую строку."""
         return self._grid[row][col]
 
 
 def draw_board(screen: pygame.Surface, board: Board) -> None:
-    """Draw board and pieces onto the screen."""
+    """Нарисовать доску и фигуры на экране."""
     font = pygame.font.SysFont(None, 64)
     for row in range(BOARD_SIZE):
         for col in range(BOARD_SIZE):
@@ -79,7 +79,7 @@ def draw_board(screen: pygame.Surface, board: Board) -> None:
 
 
 def main() -> None:
-    """Initialize window and render starting board."""
+    """Инициализировать окно и отрисовать стартовую доску."""
     pygame.init()
     screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
     pygame.display.set_caption("MiniGPTChess")
