@@ -17,6 +17,7 @@ SQUARE_SIZE = 80
 WINDOW_SIZE = BOARD_SIZE * SQUARE_SIZE
 START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 SERVER_URL = "http://localhost:8000"
+REQUEST_TIMEOUT = 30.0  # таймаут ожидания ответа сервера, сек
 
 UNICODE_PIECES = {
     "K": "\u2654",
@@ -139,7 +140,9 @@ def main() -> None:
                 "side": board.side,
                 "client_move": move,
             }
-            response = httpx.post(f"{SERVER_URL}/move", json=payload)
+            response = httpx.post(
+                f"{SERVER_URL}/move", json=payload, timeout=REQUEST_TIMEOUT
+            )
             data = response.json()
             if data.get("new_fen"):
                 board.set_fen(data["new_fen"])
