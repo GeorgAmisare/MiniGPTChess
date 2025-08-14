@@ -15,8 +15,9 @@
 
 ```
 client/        # PyGame интерфейс
+client/tests/  # тесты клиента
 server/app/    # FastAPI сервер и логика игры
-tests/         # тесты утилит
+tests/         # тесты сервера
 ```
 
 ## Установка
@@ -108,8 +109,11 @@ python client/main.py
 ## Тестирование
 
 ```bash
-pytest
+pytest tests        # тесты сервера
+pytest client       # тесты клиента
 ```
+
+В репозитории настроен GitHub Actions, который запускает линтер и оба набора тестов при каждом push или pull request.
 
 ## Конфигурации VSCode
 

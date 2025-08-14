@@ -32,7 +32,7 @@ jobs:
         run: |
           pip install -r requirements-server.txt pytest
       - name: Запуск тестов сервера
-        run: pytest
+        run: pytest tests
 
   test-client:
     runs-on: ubuntu-latest
