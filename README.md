@@ -103,3 +103,12 @@ python client/main.py
 ```bash
 pytest
 ```
+
+## Конфигурации VSCode
+
+В каталоге `.vscode` находится файл `launch.json` с конфигурациями для удобного запуска проекта.
+
+- **Client** — старт клиента `client/main.py`.
+- **Client Tests** — запуск тестов клиента с помощью `pytest`.
+- **Server** — запуск сервера через `uvicorn server.main:app`.
+- **Server Tests** — запуск тестов сервера.
