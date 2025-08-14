@@ -5,6 +5,10 @@ from typing import List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
+# Максимальные допустимые длины входных строк
+FEN_MAX_LENGTH = 100
+MOVE_MAX_LENGTH = 8
+
 
 class ErrorCode(str, Enum):
     """Коды возможных ошибок при обработке хода."""
@@ -20,10 +24,16 @@ class ErrorCode(str, Enum):
 class MoveRequest(BaseModel):
     """Запрос хода от клиента."""
 
-    fen: str = Field(..., description="Позиция на доске в формате FEN")
+    fen: str = Field(
+        ...,
+        description="Позиция на доске в формате FEN",
+        max_length=FEN_MAX_LENGTH,
+    )
     side: Literal["w", "b"]
     client_move: Optional[str] = Field(
-        None, description="Ход игрока в формате UCI"
+        None,
+        description="Ход игрока в формате UCI",
+        max_length=MOVE_MAX_LENGTH,
     )
 
 

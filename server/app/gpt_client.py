@@ -14,6 +14,7 @@ _api_key = os.getenv("OPENAI_API_KEY")
 _client: Optional[OpenAI] = (
     OpenAI(api_key=_api_key) if _api_key else None
 )
+_MAX_RETRIES = 2  # ограничение количества повторных запросов к GPT
 
 
 def get_ai_move(fen: str, legal_moves: List[str]) -> str:
@@ -27,8 +28,9 @@ def get_ai_move(fen: str, legal_moves: List[str]) -> str:
         Список легальных ходов в формате UCI.
 
     Функция обращается к OpenAI Responses API и проверяет, что полученный
-    ход присутствует в ``legal_moves``. Выполняется до трёх попыток. При
-    ошибке API или отсутствии корректного ответа выбирается случайный ход.
+    ход присутствует в ``legal_moves``. Выполняется не более двух попыток.
+    При ошибке API или отсутствии корректного ответа выбирается случайный
+    ход.
     """
     if not fen:
         raise ValueError("FEN must be provided")
@@ -46,7 +48,7 @@ def get_ai_move(fen: str, legal_moves: List[str]) -> str:
     if _client is None:
         return random.choice(legal_moves)
 
-    for _ in range(3):
+    for _ in range(_MAX_RETRIES):
         try:
             response = _client.responses.create(model=_MODEL, input=prompt)
             ai_move = response.output[0].content[0].text.strip()
