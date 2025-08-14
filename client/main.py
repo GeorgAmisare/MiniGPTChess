@@ -2,14 +2,18 @@
 
 from __future__ import annotations
 
+import logging
+import sys
 import threading
+from pathlib import Path
 from typing import Iterable
 
 import httpx
 import pygame
-import logging
 
-from logging_config import setup_logging
+# Добавляем корневую директорию проекта в путь поиска модулей
+sys.path.append(str(Path(__file__).resolve().parents[1]))
+from logging_config import setup_logging  # noqa: E402
 
 WHITE = (240, 217, 181)
 BROWN = (181, 136, 99)
