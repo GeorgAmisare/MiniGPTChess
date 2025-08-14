@@ -108,7 +108,11 @@ def draw_board(
             pygame.draw.rect(screen, color, rect)
             piece = board.piece_at(row, col)
             if piece:
-                text = font.render(UNICODE_PIECES[piece], True, pygame.Color("black"))
+                text = font.render(
+                    UNICODE_PIECES[piece],
+                    True,
+                    pygame.Color("black"),
+                )
                 text_rect = text.get_rect(center=rect.center)
                 screen.blit(text, text_rect)
 
@@ -128,9 +132,13 @@ def main() -> None:
 
     def send_move(move: str) -> None:
         """Отправить ход на сервер и обработать ответ."""
-        nonlocal board, last_move, message, waiting
+        nonlocal last_move, message, waiting
         try:
-            payload = {"fen": board.fen, "side": board.side, "client_move": move}
+            payload = {
+                "fen": board.fen,
+                "side": board.side,
+                "client_move": move,
+            }
             response = httpx.post(f"{SERVER_URL}/move", json=payload)
             data = response.json()
             if data.get("new_fen"):
@@ -167,7 +175,11 @@ def main() -> None:
                 else:
                     move = coords_to_uci(*selected) + coords_to_uci(row, col)
                     waiting = True
-                    threading.Thread(target=send_move, args=(move,), daemon=True).start()
+                    threading.Thread(
+                        target=send_move,
+                        args=(move,),
+                        daemon=True,
+                    ).start()
                     selected = None
 
         draw_board(screen, board, last_move, selected)
@@ -176,7 +188,11 @@ def main() -> None:
             text = font.render(message, True, pygame.Color("red"))
             screen.blit(text, (5, WINDOW_SIZE - 20))
         if waiting:
-            wait_text = font.render("Ожидание...", True, pygame.Color("blue"))
+            wait_text = font.render(
+                "Ожидание...",
+                True,
+                pygame.Color("blue"),
+            )
             screen.blit(wait_text, (WINDOW_SIZE - 120, WINDOW_SIZE - 20))
         pygame.display.flip()
         clock.tick(30)

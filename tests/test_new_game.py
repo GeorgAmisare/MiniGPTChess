@@ -8,4 +8,3 @@ def test_new_game(client):
     response = client.post("/new")
     assert response.status_code == 200
     assert response.json() == {"fen": chess.STARTING_FEN, "side": "w"}
-

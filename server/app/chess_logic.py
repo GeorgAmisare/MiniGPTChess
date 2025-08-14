@@ -9,7 +9,9 @@ import chess
 from .models import ErrorCode
 
 
-def validate_and_apply_move(fen: str, move: str) -> Tuple[Optional[chess.Board], List[ErrorCode]]:
+def validate_and_apply_move(
+    fen: str, move: str
+) -> Tuple[Optional[chess.Board], List[ErrorCode]]:
     """Проверить ход в формате UCI и применить его к позиции ``fen``.
 
     Parameters

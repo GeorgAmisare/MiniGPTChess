@@ -9,7 +9,9 @@ def test_validate_and_apply_move_success():
     board, errors = validate_and_apply_move(chess.STARTING_FEN, "e2e4")
     assert not errors
     assert board is not None
-    assert board.fen() == "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+    assert board.fen() == (
+        "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1"
+    )
 
 
 def test_validate_and_apply_move_illegal():
