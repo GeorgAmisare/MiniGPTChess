@@ -12,6 +12,7 @@ class ErrorCode(str, Enum):
     ILLEGAL_CLIENT_MOVE = "illegal_client_move"
     NO_LEGAL_MOVES = "no_legal_moves"
     INVALID_FEN = "invalid_fen"
+    SIDE_TO_MOVE_MISMATCH = "side_to_move_mismatch"
     GPT_INVALID_MOVE = "gpt_invalid_move"
     SERVER_ERROR = "server_error"
 

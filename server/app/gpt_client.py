@@ -3,14 +3,17 @@
 import os
 import random
 import logging
-from typing import List
+from typing import List, Optional
 
 from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
-_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 _MODEL = "gpt-4o-mini"
+_api_key = os.getenv("OPENAI_API_KEY")
+_client: Optional[OpenAI] = (
+    OpenAI(api_key=_api_key) if _api_key else None
+)
 
 
 def get_ai_move(fen: str, legal_moves: List[str]) -> str:
@@ -39,6 +42,9 @@ def get_ai_move(fen: str, legal_moves: List[str]) -> str:
         f"FEN: {fen}\n"
         f"Legal moves: {', '.join(legal_moves)}"
     )
+
+    if _client is None:
+        return random.choice(legal_moves)
 
     for _ in range(3):
         try:
