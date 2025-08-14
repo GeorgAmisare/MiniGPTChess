@@ -29,3 +29,5 @@ python -m server.app.main
 ### Endpoints
 
 - `GET /health` — return service status.
+- `POST /move` — validate the player's move and return the AI reply.
+- `POST /new` — start a fresh game and return the initial position.
