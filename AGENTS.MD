@@ -124,3 +124,4 @@ flowchart LR
 ## 6) Security
 
 * GPT key is stored only on the server.
+* Проект развёрнут на VPS с публичным IP; туннели и доменные имена не используются.
