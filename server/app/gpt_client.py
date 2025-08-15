@@ -60,7 +60,7 @@ def get_ai_move(fen: str, legal_moves: List[str]) -> str:
                 input=prompt,
                 temperature=0,
                 top_p=1,
-                max_tokens=3,
+                max_output_tokens=3,
             )
             ai_move = response.output[0].content[0].text.strip()
         except Exception as exc:  # noqa: BLE001
