@@ -7,6 +7,8 @@ from client.main import (
     uci_to_coords,
     draw_board,
     get_piece_color,
+    can_select_square,
+    deselect_on_right,
     WHITE,
     BROWN,
     LAST_MOVE_COLOR,
@@ -64,6 +66,22 @@ def test_piece_colors() -> None:
     """Проверить выбор цвета фигур в зависимости от регистра."""
     assert get_piece_color("K") == pygame.Color("white")
     assert get_piece_color("q") == pygame.Color("black")
+
+
+def test_can_select_square_only_own_piece() -> None:
+    """Выбирать можно только фигуры своей стороны."""
+    board = Board()  # белые начинают
+    assert can_select_square(board, 6, 0)  # пешка a2
+    assert not can_select_square(board, 1, 0)  # пешка a7
+    assert not can_select_square(board, 4, 4)  # пустая клетка
+    board.set_fen("8/8/8/8/8/8/8/3k4 b - - 0 1")
+    assert can_select_square(board, 7, 3)
+
+
+def test_deselect_on_right_click() -> None:
+    """Правый клик должен сбрасывать выделение."""
+    assert deselect_on_right(3, (1, 1)) is None
+    assert deselect_on_right(1, (1, 1)) == (1, 1)
 
 
 def test_coordinates_positions() -> None:
