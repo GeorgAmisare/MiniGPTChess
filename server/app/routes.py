@@ -4,7 +4,7 @@ from fastapi import APIRouter
 import chess
 import logging
 
-from chess_logic.common import compute_game_flags, validate_and_apply_move
+from shared.chess import compute_game_flags, validate_and_apply_move
 from .models import ErrorCode, Flags, MoveRequest, MoveResponse
 from .gpt_client import get_ai_move
 

@@ -1,8 +1,8 @@
-"""Тесты утилит шахматной логики."""
+"""Тесты функций модуля ``shared.chess``."""
 
 import chess
 
-from chess_logic.common import compute_game_flags, validate_and_apply_move
+from shared.chess import compute_game_flags, validate_and_apply_move
 
 
 def test_validate_and_apply_move_success():
