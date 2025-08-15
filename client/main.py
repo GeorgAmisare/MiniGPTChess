@@ -20,6 +20,8 @@ WHITE = (240, 217, 181)
 BROWN = (181, 136, 99)
 LAST_MOVE_COLOR = (246, 246, 105)
 SELECT_COLOR = (106, 170, 100)
+COORD_COLOR = (0, 0, 0)
+COORD_FONT_SIZE = 16
 BOARD_SIZE = 8
 SQUARE_SIZE = 80
 WINDOW_SIZE = BOARD_SIZE * SQUARE_SIZE
@@ -112,6 +114,50 @@ def uci_to_coords(move: str) -> tuple[tuple[int, int], tuple[int, int]]:
     return from_sq, to_sq
 
 
+def draw_coordinates(screen: pygame.Surface) -> None:
+    """Рисует буквенно-цифровую разметку внутри углов крайних клеток."""
+    font = pygame.font.SysFont("DejaVu Sans", COORD_FONT_SIZE)
+    files = "abcdefgh"  # слева -> вправо
+    ranks = "87654321"  # сверху -> вниз
+    pad = 4  # отступ от края угла
+
+    # Верхний ряд: буквы в правом-верхнем углу каждой верхней клетки
+    top_row_y = 0
+    for col, file_char in enumerate(files):
+        text = font.render(file_char, True, COORD_COLOR)
+        x = (col + 1) * SQUARE_SIZE - pad
+        y = top_row_y + pad
+        rect = text.get_rect(topright=(x, y))
+        screen.blit(text, rect)
+
+    # Нижний ряд: буквы в левом-нижнем углу каждой нижней клетки
+    bottom_row_y = (BOARD_SIZE - 1) * SQUARE_SIZE
+    for col, file_char in enumerate(files):
+        text = font.render(file_char, True, COORD_COLOR)
+        x = col * SQUARE_SIZE + pad
+        y = bottom_row_y + SQUARE_SIZE - pad
+        rect = text.get_rect(bottomleft=(x, y))
+        screen.blit(text, rect)
+
+    # Левый столбец: цифры в левом-верхнем углу каждой левой клетки
+    left_col_x = 0
+    for row, rank_char in enumerate(ranks):
+        text = font.render(rank_char, True, COORD_COLOR)
+        x = left_col_x + pad
+        y = row * SQUARE_SIZE + pad
+        rect = text.get_rect(topleft=(x, y))
+        screen.blit(text, rect)
+
+    # Правый столбец: цифры в правом-нижнем углу каждой правой клетки
+    right_col_x = (BOARD_SIZE - 1) * SQUARE_SIZE
+    for row, rank_char in enumerate(ranks):
+        text = font.render(rank_char, True, COORD_COLOR)
+        x = right_col_x + SQUARE_SIZE - pad
+        y = (row + 1) * SQUARE_SIZE - pad
+        rect = text.get_rect(bottomright=(x, y))
+        screen.blit(text, rect)
+
+
 def draw_board(
     screen: pygame.Surface,
     board: Board,
@@ -145,6 +191,7 @@ def draw_board(
                 )
                 text_rect = text.get_rect(center=rect.center)
                 screen.blit(text, text_rect)
+    draw_coordinates(screen)
 
 
 def main() -> None:
