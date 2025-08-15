@@ -13,6 +13,7 @@ import pygame
 
 # Добавляем корневую директорию проекта в путь поиска модулей
 sys.path.append(str(Path(__file__).resolve().parents[1]))
+from client.chess_validation import validate_and_apply_move  # noqa: E402
 from logging_config import setup_logging  # noqa: E402
 
 WHITE = (240, 217, 181)
@@ -214,12 +215,17 @@ def main() -> None:
                 else:
                     move = coords_to_uci(*selected) + coords_to_uci(row, col)
                     logger.info("Ход игрока: %s", move)
-                    waiting = True
-                    threading.Thread(
-                        target=send_move,
-                        args=(move,),
-                        daemon=True,
-                    ).start()
+                    _, errors = validate_and_apply_move(board.fen, move)
+                    if errors:
+                        message = "Ошибки: " + ", ".join(errors)
+                    else:
+                        message = ""
+                        waiting = True
+                        threading.Thread(
+                            target=send_move,
+                            args=(move,),
+                            daemon=True,
+                        ).start()
                     selected = None
 
         draw_board(screen, board, last_move, selected)
