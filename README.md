@@ -35,27 +35,35 @@ pip install -r requirements-client.txt
 
 ## Переменные окружения
 
-Создайте файл `.env` на основе `.env.example` и укажите ключ:
+Создайте файл `.env` на основе `.env.example` и укажите ключи:
 
 ```bash
 cp .env.example .env
 # заполните OPENAI_API_KEY=<ваш ключ>
+# обязательно укажите SERVER_URL=http://<PUBLIC_IP>:<PORT>
 ```
+
+`SERVER_URL` задаёт адрес сервера. Значение обязательно; его можно хранить в `.env` (загружается через `python-dotenv`) или передавать при запуске.
 
 Для включения подробных логов установите переменную окружения
 `DEBUG_LOGS=1` перед запуском клиента или сервера.
+
+Для ограничения доступа по CORS укажите `CORS_ALLOW_ORIGINS` со списком адресов
+через запятую. По умолчанию разрешены все источники.
 
 ## Запуск
 
 ### Сервер
 
 ```bash
-uvicorn server.app:app --reload --env-file .env
+uvicorn server.app:app --host 0.0.0.0 --port 8000 --env-file .env
 ```
+Сервер настроен с поддержкой CORS: по умолчанию API доступен с любого домена.
+Список доменов можно ограничить переменной `CORS_ALLOW_ORIGINS`.
 
 #### Эндпоинты
 
-- `GET /health` — проверка работоспособности.
+- `GET /health` — проверка работоспособности; возвращает `{ "status": "ok" }`.
 - `POST /move` — применяет ход игрока и возвращает ход ИИ.
 
 Пример запроса:
@@ -110,8 +118,10 @@ uvicorn server.app:app --reload --env-file .env
 ### Клиент
 
 ```bash
-python client/main.py
+SERVER_URL=http://<PUBLIC_IP>:<PORT> python client/main.py
 ```
+
+Если адрес сервера указан в `.env`, достаточно выполнить `python client/main.py`.
 
 Клиент отображает шахматную доску в стартовой позиции и взаимодействует с сервером для обмена ходами.
 
@@ -125,6 +135,13 @@ pyinstaller --onefile --name MiniGPTChess client/main.py
 ```
 
 Готовый файл появится в каталоге `dist` (например, `dist/MiniGPTChess` или `MiniGPTChess.exe` на Windows). Передайте его вместе с этим каталогом и запускайте на машине, где уже работает сервер. Для получения папки с зависимостями используйте `pyinstaller --name MiniGPTChess client/main.py`; итоговая директория окажется в `dist/MiniGPTChess/`.
+
+
+При запуске укажите URL сервера:
+
+```bash
+SERVER_URL=http://<PUBLIC_IP>:<PORT> ./dist/MiniGPTChess
+```
 
 ## Тестирование
 

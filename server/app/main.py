@@ -1,9 +1,11 @@
 """Приложение FastAPI с эндпоинтом проверки состояния."""
 
+import os
 import sys
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 # Добавляем корневую директорию проекта в путь поиска модулей
 sys.path.append(str(Path(__file__).resolve().parents[2]))
@@ -14,6 +16,20 @@ from .routes import router  # noqa: E402
 setup_logging()
 
 app = FastAPI()
+
+# Список разрешённых источников можно задать через CORS_ALLOW_ORIGINS
+_origins_env = os.getenv("CORS_ALLOW_ORIGINS")
+_allow_origins = (
+    [o.strip() for o in _origins_env.split(",")] if _origins_env else ["*"]
+)
+
+# Включаем CORS, чтобы клиент мог обращаться с другого домена
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_allow_origins,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(router)
 
 
