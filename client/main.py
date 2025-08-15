@@ -40,6 +40,25 @@ UNICODE_PIECES = {
     "p": "\u265F",
 }
 
+
+def get_piece_color(piece: str) -> pygame.Color:
+    """Вернуть цвет фигуры для отображения.
+
+    Белые фигуры обозначаются заглавными буквами, чёрные — строчными.
+
+    Parameters
+    ----------
+    piece: str
+        Символ фигуры в обозначении FEN.
+
+    Returns
+    -------
+    pygame.Color
+        Цвет для отрисовки фигуры.
+    """
+    return pygame.Color("white") if piece.isupper() else pygame.Color("black")
+
+
 setup_logging()
 logger = logging.getLogger(__name__)
 
@@ -99,7 +118,7 @@ def draw_board(
     selected: tuple[int, int] | None = None,
 ) -> None:
     """Нарисовать доску и фигуры на экране."""
-    font = pygame.font.SysFont(None, 64)
+    font = pygame.font.SysFont("DejaVu Sans", 64)
     last_move = set(last_move or [])
     for row in range(BOARD_SIZE):
         for col in range(BOARD_SIZE):
@@ -121,7 +140,7 @@ def draw_board(
                 text = font.render(
                     UNICODE_PIECES[piece],
                     True,
-                    pygame.Color("black"),
+                    get_piece_color(piece),
                 )
                 text_rect = text.get_rect(center=rect.center)
                 screen.blit(text, text_rect)

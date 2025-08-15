@@ -6,6 +6,7 @@ from client.main import (
     coords_to_uci,
     uci_to_coords,
     draw_board,
+    get_piece_color,
     WHITE,
     BROWN,
     LAST_MOVE_COLOR,
@@ -49,3 +50,9 @@ def test_draw_board_colors() -> None:
         (SQUARE_SIZE + 1, SQUARE_SIZE + 1)
     )[:3] == SELECT_COLOR
     pygame.quit()
+
+
+def test_piece_colors() -> None:
+    """Проверить выбор цвета фигур в зависимости от регистра."""
+    assert get_piece_color("K") == pygame.Color("white")
+    assert get_piece_color("q") == pygame.Color("black")
