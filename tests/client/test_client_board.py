@@ -2,7 +2,10 @@ import os
 import threading
 import pygame
 
-from client.main import (
+# Адрес сервера требуется для импорта client.main
+os.environ.setdefault("SERVER_URL", "http://example.com")
+
+from client.main import (  # noqa: E402
     Board,
     coords_to_uci,
     uci_to_coords,
@@ -21,7 +24,7 @@ from client.main import (
     COORD_COLOR,
     COORD_FONT_SIZE,
 )
-from client.chess_validation import validate_and_apply_move
+from client.chess_validation import validate_and_apply_move  # noqa: E402
 
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 
