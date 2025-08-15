@@ -18,6 +18,7 @@ from client.main import (
     COORD_COLOR,
     COORD_FONT_SIZE,
 )
+from client.chess_validation import validate_and_apply_move
 
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 
@@ -76,6 +77,18 @@ def test_can_select_square_only_own_piece() -> None:
     assert not can_select_square(board, 4, 4)  # пустая клетка
     board.set_fen("8/8/8/8/8/8/8/3k4 b - - 0 1")
     assert can_select_square(board, 7, 3)
+
+
+def test_local_move_updates_board() -> None:
+    """После применения хода доска должна обновляться без ожидания сервера."""
+    board = Board()
+    pre_fen = board.fen
+    pre_side = board.side
+    new_board, errors = validate_and_apply_move(pre_fen, "e2e4")
+    assert not errors and new_board is not None
+    board.set_fen(new_board.fen())
+    assert board.fen != pre_fen
+    assert board.side != pre_side
 
 
 def test_deselect_on_right_click() -> None:
