@@ -20,6 +20,8 @@ WHITE = (240, 217, 181)
 BROWN = (181, 136, 99)
 LAST_MOVE_COLOR = (246, 246, 105)
 SELECT_COLOR = (106, 170, 100)
+COORD_COLOR = (0, 0, 0)
+COORD_FONT_SIZE = 16
 BOARD_SIZE = 8
 SQUARE_SIZE = 80
 WINDOW_SIZE = BOARD_SIZE * SQUARE_SIZE
@@ -112,6 +114,29 @@ def uci_to_coords(move: str) -> tuple[tuple[int, int], tuple[int, int]]:
     return from_sq, to_sq
 
 
+def draw_coordinates(screen: pygame.Surface) -> None:
+    """Нарисовать буквенно-цифровую разметку по краям доски."""
+    font = pygame.font.SysFont("DejaVu Sans", COORD_FONT_SIZE)
+    files = "abcdefgh"
+    ranks = "87654321"
+    for idx, file in enumerate(files):
+        text = font.render(file, True, COORD_COLOR)
+        rect = text.get_rect()
+        rect.bottomleft = (idx * SQUARE_SIZE + 2, WINDOW_SIZE - 2)
+        screen.blit(text, rect)
+        rect = text.get_rect()
+        rect.topleft = (idx * SQUARE_SIZE + 2, 2)
+        screen.blit(text, rect)
+    for idx, rank in enumerate(ranks):
+        text = font.render(rank, True, COORD_COLOR)
+        rect = text.get_rect()
+        rect.topleft = (2, idx * SQUARE_SIZE + 2)
+        screen.blit(text, rect)
+        rect = text.get_rect()
+        rect.topright = (WINDOW_SIZE - 2, idx * SQUARE_SIZE + 2)
+        screen.blit(text, rect)
+
+
 def draw_board(
     screen: pygame.Surface,
     board: Board,
@@ -145,6 +170,7 @@ def draw_board(
                 )
                 text_rect = text.get_rect(center=rect.center)
                 screen.blit(text, text_rect)
+    draw_coordinates(screen)
 
 
 def main() -> None:

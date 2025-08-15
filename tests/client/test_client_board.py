@@ -26,6 +26,12 @@ def test_coords_roundtrip() -> None:
     assert uci_to_coords(move) == (start, end)
 
 
+def test_coords_edges() -> None:
+    """Проверить преобразование крайних координат."""
+    assert coords_to_uci(7, 0) == "a1"
+    assert coords_to_uci(0, 7) == "h8"
+
+
 def test_board_piece_parsing() -> None:
     """Проверить чтение фигур из строки FEN."""
     board = Board("8/8/8/8/8/8/8/4K3 w - - 0 1")
