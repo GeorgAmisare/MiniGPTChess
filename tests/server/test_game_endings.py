@@ -34,7 +34,7 @@ def test_checkmate_detection(monkeypatch):
 
 
 def test_stalemate_detection(client):
-    """Ход клиента, ведущий к пату, должен быть зафиксирован."""
+    """Ход клиента, ведущий к пату, должен быть зафиксирован без ошибок."""
     payload = {
         "fen": "k7/1Q6/2K5/8/8/8/8/8 w - - 0 1",
         "side": "w",
@@ -43,12 +43,35 @@ def test_stalemate_detection(client):
     response = client.post("/move", json=payload)
     assert response.status_code == 200
     data = response.json()
-    assert data["status"] == "error"
-    assert data["errors"] == ["no_legal_moves"]
+    assert data["status"] == "ok"
+    assert data["errors"] == []
     assert data["flags"] == {
         "check": False,
         "checkmate": False,
         "stalemate": True,
+        "insufficient_material": False,
+        "seventyfive_moves": False,
+        "fivefold_repetition": False,
+    }
+
+
+def test_checkmate_after_client_move(client):
+    """Ход клиента, приводящий к мату, должен завершить игру без ошибок."""
+
+    payload = {
+        "fen": "k7/8/1QK5/8/8/8/8/8 w - - 0 1",
+        "side": "w",
+        "client_move": "b6b7",
+    }
+    response = client.post("/move", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "ok"
+    assert data["errors"] == []
+    assert data["flags"] == {
+        "check": True,
+        "checkmate": True,
+        "stalemate": False,
         "insufficient_material": False,
         "seventyfive_moves": False,
         "fivefold_repetition": False,

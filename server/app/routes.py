@@ -86,12 +86,12 @@ async def move(request: MoveRequest) -> MoveResponse:
         if board.is_game_over():
             logger.info("Игра завершена после хода клиента")
             return MoveResponse(
-                status="error",
+                status="ok",
                 applied_client_move=True,
                 ai_move=None,
                 new_fen=board.fen(),
                 flags=Flags(**compute_game_flags(board)),
-                errors=[ErrorCode.NO_LEGAL_MOVES],
+                errors=[],
             )
 
     flags_before_ai = Flags(**compute_game_flags(board))
