@@ -14,6 +14,7 @@ import pygame
 # Добавляем корневую директорию проекта в путь поиска модулей
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 from client.chess_validation import validate_and_apply_move  # noqa: E402
+from client.config import SERVER_URL  # noqa: E402
 from logging_config import setup_logging  # noqa: E402
 
 WHITE = (240, 217, 181)
@@ -26,7 +27,6 @@ BOARD_SIZE = 8
 SQUARE_SIZE = 80
 WINDOW_SIZE = BOARD_SIZE * SQUARE_SIZE
 START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-SERVER_URL = "http://localhost:8000"
 
 UNICODE_PIECES = {
     "K": "\u2654",
