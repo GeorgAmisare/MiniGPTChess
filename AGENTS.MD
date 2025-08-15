@@ -124,4 +124,4 @@ flowchart LR
 ## 6) Security
 
 * GPT key is stored only on the server.
-* For MVP — run on a local PC or via tunnel (ngrok/Cloudflared).
+* For MVP — run on a local PC.
