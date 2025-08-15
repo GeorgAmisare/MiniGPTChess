@@ -124,7 +124,7 @@ def draw_coordinates(screen: pygame.Surface) -> None:
     # Верхний ряд: буквы в правом-верхнем углу каждой верхней клетки
     top_row_y = 0
     for col, file_char in enumerate(files):
-        text = font.render(file_char, True, COORD_COLOR)
+        text = font.render(file_char, False, COORD_COLOR)
         x = (col + 1) * SQUARE_SIZE - pad
         y = top_row_y + pad
         rect = text.get_rect(topright=(x, y))
@@ -133,7 +133,7 @@ def draw_coordinates(screen: pygame.Surface) -> None:
     # Нижний ряд: буквы в левом-нижнем углу каждой нижней клетки
     bottom_row_y = (BOARD_SIZE - 1) * SQUARE_SIZE
     for col, file_char in enumerate(files):
-        text = font.render(file_char, True, COORD_COLOR)
+        text = font.render(file_char, False, COORD_COLOR)
         x = col * SQUARE_SIZE + pad
         y = bottom_row_y + SQUARE_SIZE - pad
         rect = text.get_rect(bottomleft=(x, y))
@@ -142,7 +142,7 @@ def draw_coordinates(screen: pygame.Surface) -> None:
     # Левый столбец: цифры в левом-верхнем углу каждой левой клетки
     left_col_x = 0
     for row, rank_char in enumerate(ranks):
-        text = font.render(rank_char, True, COORD_COLOR)
+        text = font.render(rank_char, False, COORD_COLOR)
         x = left_col_x + pad
         y = row * SQUARE_SIZE + pad
         rect = text.get_rect(topleft=(x, y))
@@ -151,7 +151,7 @@ def draw_coordinates(screen: pygame.Surface) -> None:
     # Правый столбец: цифры в правом-нижнем углу каждой правой клетки
     right_col_x = (BOARD_SIZE - 1) * SQUARE_SIZE
     for row, rank_char in enumerate(ranks):
-        text = font.render(rank_char, True, COORD_COLOR)
+        text = font.render(rank_char, False, COORD_COLOR)
         x = right_col_x + SQUARE_SIZE - pad
         y = (row + 1) * SQUARE_SIZE - pad
         rect = text.get_rect(bottomright=(x, y))
