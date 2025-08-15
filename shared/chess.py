@@ -1,4 +1,4 @@
-"""Утилиты шахматной логики для проверки ходов и оценки состояния игры."""
+"""Общая шахматная логика, используемая сервером и клиентом."""
 
 from __future__ import annotations
 
@@ -6,12 +6,10 @@ from typing import Dict, List, Optional, Tuple
 
 import chess
 
-from .models import ErrorCode
-
 
 def validate_and_apply_move(
     fen: str, move: str
-) -> Tuple[Optional[chess.Board], List[ErrorCode]]:
+) -> Tuple[Optional[chess.Board], List[str]]:
     """Проверить ход в формате UCI и применить его к позиции ``fen``.
 
     Parameters
@@ -27,21 +25,20 @@ def validate_and_apply_move(
         ``(board, errors)``: ``board`` — обновлённый ``chess.Board`` при успехе
         (``None`` при ошибке), ``errors`` — список кодов ошибок.
     """
-
-    errors: List[ErrorCode] = []
+    errors: List[str] = []
 
     try:
         board = chess.Board(fen)
     except ValueError:
-        return None, [ErrorCode.INVALID_FEN]
+        return None, ["invalid_fen"]
 
     try:
         uci_move = chess.Move.from_uci(move)
     except ValueError:
-        return None, [ErrorCode.ILLEGAL_CLIENT_MOVE]
+        return None, ["illegal_client_move"]
 
     if uci_move not in board.legal_moves:
-        return None, [ErrorCode.ILLEGAL_CLIENT_MOVE]
+        return None, ["illegal_client_move"]
 
     board.push(uci_move)
     board.fen()
@@ -50,10 +47,7 @@ def validate_and_apply_move(
 
 
 def compute_game_flags(board: chess.Board) -> Dict[str, bool]:
-    """Получить словарь флагов состояния игры для позиции ``board``.
-
-    Флаги включают распространённые терминальные условия и простые проверки.
-    """
+    """Получить словарь флагов состояния игры для позиции ``board``."""
 
     return {
         "check": board.is_check(),
