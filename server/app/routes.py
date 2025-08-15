@@ -4,7 +4,7 @@ from fastapi import APIRouter
 import chess
 import logging
 
-from .chess_logic import compute_game_flags, validate_and_apply_move
+from chess_logic.common import compute_game_flags, validate_and_apply_move
 from .models import ErrorCode, Flags, MoveRequest, MoveResponse
 from .gpt_client import get_ai_move
 
@@ -61,11 +61,12 @@ async def move(request: MoveRequest) -> MoveResponse:
         new_board, errors = validate_and_apply_move(
             request.fen, request.client_move
         )
-        if errors:
+        errors_enum = [ErrorCode(err) for err in errors]
+        if errors_enum:
             logger.warning(
                 "Ход клиента отклонён: %s, ошибки: %s",
                 request.client_move,
-                errors,
+                errors_enum,
             )
             return MoveResponse(
                 status="error",
@@ -73,7 +74,7 @@ async def move(request: MoveRequest) -> MoveResponse:
                 ai_move=None,
                 new_fen=board.fen(),
                 flags=Flags(**compute_game_flags(board)),
-                errors=errors,
+                errors=errors_enum,
             )
         board = new_board
         applied_client_move = True
