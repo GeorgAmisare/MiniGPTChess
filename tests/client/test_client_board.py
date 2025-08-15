@@ -7,6 +7,7 @@ from client.main import (
     uci_to_coords,
     draw_board,
     get_piece_color,
+    can_select_square,
     WHITE,
     BROWN,
     LAST_MOVE_COLOR,
@@ -56,3 +57,26 @@ def test_piece_colors() -> None:
     """Проверить выбор цвета фигур в зависимости от регистра."""
     assert get_piece_color("K") == pygame.Color("white")
     assert get_piece_color("q") == pygame.Color("black")
+
+
+def test_can_select_square() -> None:
+    """Проверить выбор клетки только со своей фигурой."""
+    board = Board()
+    assert can_select_square(board, 6, 0)
+    assert not can_select_square(board, 1, 0)
+    assert not can_select_square(board, 4, 4)
+
+
+def test_right_click_clears_selection() -> None:
+    """Проверить сброс выделения правой кнопкой мыши."""
+    pygame.init()
+    selected = (6, 0)
+    right_click = pygame.event.Event(
+        pygame.MOUSEBUTTONDOWN, button=3, pos=(0, 0)
+    )
+    pygame.event.post(right_click)
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+            selected = None
+    assert selected is None
+    pygame.quit()

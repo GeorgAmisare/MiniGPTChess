@@ -112,6 +112,16 @@ def uci_to_coords(move: str) -> tuple[tuple[int, int], tuple[int, int]]:
     return from_sq, to_sq
 
 
+def can_select_square(board: Board, row: int, col: int) -> bool:
+    """Проверить, что на клетке стоит своя фигура."""
+    piece = board.piece_at(row, col)
+    if not piece:
+        return False
+    if board.side == "w":
+        return piece.isupper()
+    return piece.islower()
+
+
 def draw_board(
     screen: pygame.Surface,
     board: Board,
@@ -203,29 +213,30 @@ def main() -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif (
-                event.type == pygame.MOUSEBUTTONDOWN
-                and event.button == 1
-                and not waiting
-            ):
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 col = event.pos[0] // SQUARE_SIZE
                 row = event.pos[1] // SQUARE_SIZE
-                if selected is None:
-                    selected = (row, col)
-                else:
-                    move = coords_to_uci(*selected) + coords_to_uci(row, col)
-                    logger.info("Ход игрока: %s", move)
-                    _, errors = validate_and_apply_move(board.fen, move)
-                    if errors:
-                        message = "Ошибки: " + ", ".join(errors)
+                if event.button == 1 and not waiting:
+                    if selected is None:
+                        if can_select_square(board, row, col):
+                            selected = (row, col)
                     else:
-                        message = ""
-                        waiting = True
-                        threading.Thread(
-                            target=send_move,
-                            args=(move,),
-                            daemon=True,
-                        ).start()
+                        dest = coords_to_uci(row, col)
+                        move = coords_to_uci(*selected) + dest
+                        logger.info("Ход игрока: %s", move)
+                        _, errors = validate_and_apply_move(board.fen, move)
+                        if errors:
+                            message = "Ошибки: " + ", ".join(errors)
+                        else:
+                            message = ""
+                            waiting = True
+                            threading.Thread(
+                                target=send_move,
+                                args=(move,),
+                                daemon=True,
+                            ).start()
+                        selected = None
+                elif event.button == 3:
                     selected = None
 
         draw_board(screen, board, last_move, selected)
