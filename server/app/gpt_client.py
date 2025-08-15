@@ -65,10 +65,10 @@ def get_ai_move(fen: str, legal_moves: List[str]) -> str:
             ai_move = response.output[0].content[0].text.strip()
         except Exception as exc:  # noqa: BLE001
             logger.error("Ошибка OpenAI API: %s", exc)
-            break
+            continue
         logger.info("Ответ GPT: %s", ai_move)
         if ai_move in legal_moves:
             return ai_move
     move = random.choice(legal_moves)
-    logger.info("Использован резервный случайный ход: %s", move)
+    logger.info("Превышен лимит повторов, выбран случайный ход: %s", move)
     return move
