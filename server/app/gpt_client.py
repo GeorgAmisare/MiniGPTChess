@@ -38,9 +38,9 @@ def get_ai_move(fen: str, legal_moves: List[str]) -> str:
         raise ValueError("legal_moves must not be empty")
 
     prompt = (
-        "You are a chess engine. Given the FEN and a list of legal moves, "
-        "choose one move from the list and return only that move in UCI "
-        "format.\n"
+        "You are a chess engine. Evaluate the given position and choose the"
+        " best move from the list of legal moves. Return only that move in"
+        " UCI format.\n"
         f"FEN: {fen}\n"
         f"Legal moves: {', '.join(legal_moves)}"
     )
@@ -55,7 +55,13 @@ def get_ai_move(fen: str, legal_moves: List[str]) -> str:
 
     for _ in range(_MAX_RETRIES):
         try:
-            response = _client.responses.create(model=_MODEL, input=prompt)
+            response = _client.responses.create(
+                model=_MODEL,
+                input=prompt,
+                temperature=0,
+                top_p=1,
+                max_tokens=3,
+            )
             ai_move = response.output[0].content[0].text.strip()
         except Exception as exc:  # noqa: BLE001
             logger.error("Ошибка OpenAI API: %s", exc)
