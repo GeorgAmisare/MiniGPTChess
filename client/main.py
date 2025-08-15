@@ -121,19 +121,19 @@ def draw_coordinates(screen: pygame.Surface) -> None:
     ranks = "87654321"
     for idx, file in enumerate(files):
         text = font.render(file, True, COORD_COLOR)
-        rect = text.get_rect()
-        rect.bottomleft = (idx * SQUARE_SIZE + 2, WINDOW_SIZE - 2)
+        rect = text.get_rect(
+            midbottom=((idx + 0.5) * SQUARE_SIZE, WINDOW_SIZE - 2)
+        )
         screen.blit(text, rect)
-        rect = text.get_rect()
-        rect.topleft = (idx * SQUARE_SIZE + 2, 2)
+        rect = text.get_rect(midtop=((idx + 0.5) * SQUARE_SIZE, 2))
         screen.blit(text, rect)
     for idx, rank in enumerate(ranks):
         text = font.render(rank, True, COORD_COLOR)
-        rect = text.get_rect()
-        rect.topleft = (2, idx * SQUARE_SIZE + 2)
+        rect = text.get_rect(midleft=(2, (idx + 0.5) * SQUARE_SIZE))
         screen.blit(text, rect)
-        rect = text.get_rect()
-        rect.topright = (WINDOW_SIZE - 2, idx * SQUARE_SIZE + 2)
+        rect = text.get_rect(
+            midright=(WINDOW_SIZE - 2, (idx + 0.5) * SQUARE_SIZE)
+        )
         screen.blit(text, rect)
 
 
