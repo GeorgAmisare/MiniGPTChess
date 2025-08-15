@@ -66,23 +66,53 @@ def test_piece_colors() -> None:
     assert get_piece_color("q") == pygame.Color("black")
 
 
-def test_coordinates_no_overlap() -> None:
-    """Проверить, что буквенно-цифровая разметка не перекрывается в углах."""
+def test_coordinates_positions() -> None:
+    """Убедиться, что разметка расположена в нужных углах клеток."""
     pygame.init()
     screen = pygame.Surface((WINDOW_SIZE, WINDOW_SIZE))
     board = Board("8/8/8/8/8/8/8/8 w - - 0 1")
     draw_board(screen, board)
+    # клетка a8: буква слева сверху, цифра справа сверху
     has_file = any(
         screen.get_at((x, y))[:3] == COORD_COLOR
-        for x in range(SQUARE_SIZE)
+        for x in range(COORD_FONT_SIZE)
         for y in range(COORD_FONT_SIZE)
     )
     has_rank = any(
         screen.get_at((x, y))[:3] == COORD_COLOR
-        for x in range(COORD_FONT_SIZE)
-        for y in range(SQUARE_SIZE)
+        for x in range(SQUARE_SIZE - COORD_FONT_SIZE, SQUARE_SIZE)
+        for y in range(COORD_FONT_SIZE)
     )
     assert has_file
     assert has_rank
-    assert screen.get_at((2, 2))[:3] != COORD_COLOR
+    assert not any(
+        screen.get_at((x, y))[:3] == COORD_COLOR
+        for x in range(COORD_FONT_SIZE)
+        for y in range(SQUARE_SIZE - COORD_FONT_SIZE, SQUARE_SIZE)
+    )
+    assert not any(
+        screen.get_at((x, y))[:3] == COORD_COLOR
+        for x in range(
+            SQUARE_SIZE - COORD_FONT_SIZE, SQUARE_SIZE
+        )
+        for y in range(
+            SQUARE_SIZE - COORD_FONT_SIZE, SQUARE_SIZE
+        )
+    )
+    # клетка h1: буква слева снизу, цифра справа снизу
+    has_file = any(
+        screen.get_at((x, y))[:3] == COORD_COLOR
+        for x in range(
+            WINDOW_SIZE - SQUARE_SIZE,
+            WINDOW_SIZE - SQUARE_SIZE + COORD_FONT_SIZE,
+        )
+        for y in range(WINDOW_SIZE - COORD_FONT_SIZE, WINDOW_SIZE)
+    )
+    has_rank = any(
+        screen.get_at((x, y))[:3] == COORD_COLOR
+        for x in range(WINDOW_SIZE - COORD_FONT_SIZE, WINDOW_SIZE)
+        for y in range(WINDOW_SIZE - COORD_FONT_SIZE, WINDOW_SIZE)
+    )
+    assert has_file
+    assert has_rank
     pygame.quit()
