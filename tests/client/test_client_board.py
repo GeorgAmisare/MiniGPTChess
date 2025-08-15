@@ -1,9 +1,16 @@
+"""Тесты для модуля client.main."""
+
+import importlib
 import os
 import threading
+
 import pygame
 
+
 # Адрес сервера требуется для импорта client.main
-os.environ.setdefault("SERVER_URL", "http://example.com")
+os.environ.setdefault("SERVER_URL", "http://testserver")
+import client.main as client_main  # noqa: E402
+importlib.reload(client_main)
 
 from client.main import (  # noqa: E402
     Board,
