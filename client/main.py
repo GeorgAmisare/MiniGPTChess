@@ -115,26 +115,48 @@ def uci_to_coords(move: str) -> tuple[tuple[int, int], tuple[int, int]]:
 
 
 def draw_coordinates(screen: pygame.Surface) -> None:
-    """Нарисовать буквенно-цифровую разметку по краям доски."""
+    """Рисует буквенно-цифровую разметку внутри углов крайних клеток."""
     font = pygame.font.SysFont("DejaVu Sans", COORD_FONT_SIZE)
-    files = "abcdefgh"
-    ranks = "87654321"
-    for idx, file in enumerate(files):
-        text = font.render(file, True, COORD_COLOR)
-        rect = text.get_rect(
-            bottomleft=(idx * SQUARE_SIZE + 2, WINDOW_SIZE - 2)
-        )
+    files = "abcdefgh"     # слева -> вправо
+    ranks = "87654321"     # сверху -> вниз
+    PAD = 4                # отступ от края угла
+
+    # Верхний ряд: буквы в правом-верхнем углу каждой верхней клетки
+    top_row_y = 0
+    for col, file_char in enumerate(files):
+        text = font.render(file_char, True, COORD_COLOR)
+        x = (col + 1) * SQUARE_SIZE - PAD
+        y = top_row_y + PAD
+        rect = text.get_rect(topright=(x, y))
         screen.blit(text, rect)
-        rect = text.get_rect(topleft=(idx * SQUARE_SIZE + 2, 2))
+
+    # Нижний ряд: буквы в левом-нижнем углу каждой нижней клетки
+    bottom_row_y = (BOARD_SIZE - 1) * SQUARE_SIZE
+    for col, file_char in enumerate(files):
+        text = font.render(file_char, True, COORD_COLOR)
+        x = col * SQUARE_SIZE + PAD
+        y = bottom_row_y + SQUARE_SIZE - PAD
+        rect = text.get_rect(bottomleft=(x, y))
         screen.blit(text, rect)
-    for idx, rank in enumerate(ranks):
-        text = font.render(rank, True, COORD_COLOR)
-        rect = text.get_rect(topright=(SQUARE_SIZE - 2, idx * SQUARE_SIZE + 2))
+
+    # Левый столбец: цифры в левом-верхнем углу каждой левой клетки
+    left_col_x = 0
+    for row, rank_char in enumerate(ranks):
+        text = font.render(rank_char, True, COORD_COLOR)
+        x = left_col_x + PAD
+        y = row * SQUARE_SIZE + PAD
+        rect = text.get_rect(topleft=(x, y))
         screen.blit(text, rect)
-        rect = text.get_rect(
-            bottomright=(WINDOW_SIZE - 2, (idx + 1) * SQUARE_SIZE - 2)
-        )
+
+    # Правый столбец: цифры в правом-нижнем углу каждой правой клетки
+    right_col_x = (BOARD_SIZE - 1) * SQUARE_SIZE
+    for row, rank_char in enumerate(ranks):
+        text = font.render(rank_char, True, COORD_COLOR)
+        x = right_col_x + SQUARE_SIZE - PAD
+        y = (row + 1) * SQUARE_SIZE - PAD
+        rect = text.get_rect(bottomright=(x, y))
         screen.blit(text, rect)
+
 
 
 def draw_board(
