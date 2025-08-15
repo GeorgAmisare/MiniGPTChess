@@ -146,6 +146,65 @@ def deselect_on_right(
     return None if button == 3 else selected
 
 
+def needs_promotion(
+    board: Board, start: tuple[int, int], end: tuple[int, int]
+) -> bool:
+    """Определить, превращается ли пешка при переходе на клетку ``end``.
+
+    Parameters
+    ----------
+    board: Board
+        Текущее состояние доски.
+    start: tuple[int, int]
+        Координаты исходной клетки.
+    end: tuple[int, int]
+        Координаты клетки назначения.
+
+    Returns
+    -------
+    bool
+        True, если ход ведёт к превращению пешки.
+    """
+    piece = board.piece_at(*start)
+    if piece.lower() != "p":
+        return False
+    return (board.side == "w" and end[0] == 0) or (
+        board.side == "b" and end[0] == BOARD_SIZE - 1
+    )
+
+
+def promotion_dialog(screen: pygame.Surface, side: str) -> str:
+    """Показать окно выбора фигуры для превращения и вернуть её код."""
+    font = pygame.font.SysFont("DejaVu Sans", 64)
+    options = ["q", "r", "b", "n"]
+    dialog = pygame.Surface((SQUARE_SIZE * 4, SQUARE_SIZE))
+    dialog.fill(pygame.Color("gray"))
+    for idx, code in enumerate(options):
+        symbol = UNICODE_PIECES[code.upper() if side == "w" else code]
+        text = font.render(
+            symbol,
+            True,
+            pygame.Color("white") if side == "w" else pygame.Color("black"),
+        )
+        rect = text.get_rect(
+            center=(SQUARE_SIZE * idx + SQUARE_SIZE // 2, SQUARE_SIZE // 2)
+        )
+        dialog.blit(text, rect)
+    dialog_rect = dialog.get_rect(
+        center=(WINDOW_SIZE // 2, WINDOW_SIZE // 2)
+    )
+    screen.blit(dialog, dialog_rect)
+    pygame.display.flip()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if dialog_rect.collidepoint(event.pos):
+                    idx = (event.pos[0] - dialog_rect.x) // SQUARE_SIZE
+                    if 0 <= idx < len(options):
+                        return options[idx]
+        pygame.time.wait(10)
+
+
 def draw_coordinates(screen: pygame.Surface) -> None:
     """Рисует буквенно-цифровую разметку внутри углов крайних клеток."""
     font = pygame.font.SysFont("DejaVu Sans", COORD_FONT_SIZE)
@@ -294,10 +353,12 @@ def main() -> None:
                         if can_select_square(board, row, col):
                             selected = (row, col)
                     else:
-                        move = (
-                            coords_to_uci(*selected)
-                            + coords_to_uci(row, col)
-                        )
+                        start = selected
+                        end = (row, col)
+                        move = coords_to_uci(*start) + coords_to_uci(*end)
+                        if needs_promotion(board, start, end):
+                            promo = promotion_dialog(screen, board.side)
+                            move += promo
                         logger.info("Ход игрока: %s", move)
                         _, errors = validate_and_apply_move(board.fen, move)
                         if errors:

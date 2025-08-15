@@ -1,4 +1,5 @@
 import os
+import threading
 import pygame
 
 from client.main import (
@@ -9,6 +10,8 @@ from client.main import (
     get_piece_color,
     can_select_square,
     deselect_on_right,
+    needs_promotion,
+    promotion_dialog,
     WHITE,
     BROWN,
     LAST_MOVE_COLOR,
@@ -152,4 +155,37 @@ def test_coordinates_positions() -> None:
             WINDOW_SIZE - SQUARE_SIZE + COORD_FONT_SIZE,
         )
     )
+    pygame.quit()
+
+
+def test_needs_promotion() -> None:
+    """Пешка на предпоследней линии должна требовать превращения."""
+    board = Board("8/P7/8/8/8/8/8/8 w - - 0 1")
+    assert needs_promotion(board, (1, 0), (0, 0))
+    assert not needs_promotion(board, (1, 0), (2, 0))
+
+
+def test_promotion_dialog_choice() -> None:
+    """Окно превращения должно возвращать выбранную фигуру."""
+    pygame.init()
+    screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
+    rect_x = WINDOW_SIZE // 2 - (SQUARE_SIZE * 4) // 2
+    rect_y = WINDOW_SIZE // 2 - SQUARE_SIZE // 2
+    click_pos = (
+        rect_x + SQUARE_SIZE // 2,
+        rect_y + SQUARE_SIZE // 2,
+    )
+
+    def post_event() -> None:
+        pygame.time.wait(100)
+        pygame.event.post(
+            pygame.event.Event(
+                pygame.MOUSEBUTTONDOWN, {"pos": click_pos, "button": 1}
+            )
+        )
+
+    threading.Thread(target=post_event).start()
+    result = promotion_dialog(screen, "w")
+    assert result == "q"
+    pygame.display.quit()
     pygame.quit()
