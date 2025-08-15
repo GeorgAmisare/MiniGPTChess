@@ -35,12 +35,15 @@ pip install -r requirements-client.txt
 
 ## Переменные окружения
 
-Создайте файл `.env` на основе `.env.example` и укажите ключ:
+Создайте файл `.env` на основе `.env.example` и укажите ключи:
 
 ```bash
 cp .env.example .env
 # заполните OPENAI_API_KEY=<ваш ключ>
+# при необходимости укажите SERVER_URL=http://localhost:8000
 ```
+
+`SERVER_URL` задаёт адрес сервера. Значение можно хранить в `.env` (загружается через `python-dotenv`) или передавать при запуске.
 
 Для включения подробных логов установите переменную окружения
 `DEBUG_LOGS=1` перед запуском клиента или сервера.
@@ -50,8 +53,22 @@ cp .env.example .env
 ### Сервер
 
 ```bash
-uvicorn server.app:app --reload --env-file .env
+uvicorn server.app:app --host 0.0.0.0 --port 8000 --env-file .env
 ```
+
+Чтобы открыть доступ из интернета, пробросьте порт через туннель:
+
+```bash
+cloudflared tunnel --url http://localhost:8000
+```
+
+или
+
+```bash
+ngrok http 8000
+```
+
+Полученный URL передайте клиенту через `SERVER_URL`.
 
 #### Эндпоинты
 
@@ -110,8 +127,10 @@ uvicorn server.app:app --reload --env-file .env
 ### Клиент
 
 ```bash
-python client/main.py
+SERVER_URL=https://<твой-URL> python client/main.py
 ```
+
+Если адрес сервера указан в `.env`, достаточно выполнить `python client/main.py`.
 
 Клиент отображает шахматную доску в стартовой позиции и взаимодействует с сервером для обмена ходами.
 
@@ -125,6 +144,13 @@ pyinstaller --onefile --name MiniGPTChess client/main.py
 ```
 
 Готовый файл появится в каталоге `dist` (например, `dist/MiniGPTChess` или `MiniGPTChess.exe` на Windows). Передайте его вместе с этим каталогом и запускайте на машине, где уже работает сервер. Для получения папки с зависимостями используйте `pyinstaller --name MiniGPTChess client/main.py`; итоговая директория окажется в `dist/MiniGPTChess/`.
+
+
+При запуске укажите URL сервера:
+
+```bash
+SERVER_URL=https://<твой-URL> ./dist/MiniGPTChess
+```
 
 ## Тестирование
 
