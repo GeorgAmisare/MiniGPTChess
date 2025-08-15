@@ -299,13 +299,13 @@ def main() -> None:
     waiting = False
     logger.info("Клиент запущен")
 
-    def send_move(move: str) -> None:
+    def send_move(fen: str, side: str, move: str) -> None:
         """Отправить ход на сервер и обработать ответ."""
         nonlocal last_move, message, waiting
         try:
             payload = {
-                "fen": board.fen,
-                "side": board.side,
+                "fen": fen,
+                "side": side,
                 "client_move": move,
             }
             logger.info("Отправка хода: %s", payload)
@@ -318,8 +318,6 @@ def main() -> None:
                 board.set_fen(data["new_fen"])
             if data.get("ai_move"):
                 last_move = list(uci_to_coords(data["ai_move"]))
-            else:
-                last_move = list(uci_to_coords(move))
             flags = [k for k, v in data.get("flags", {}).items() if v]
             errors = data.get("errors", [])
             if flags:
@@ -360,15 +358,21 @@ def main() -> None:
                             promo = promotion_dialog(screen, board.side)
                             move += promo
                         logger.info("Ход игрока: %s", move)
-                        _, errors = validate_and_apply_move(board.fen, move)
-                        if errors:
+                        pre_fen = board.fen
+                        pre_side = board.side
+                        new_board, errors = validate_and_apply_move(
+                            pre_fen, move
+                        )
+                        if errors or new_board is None:
                             message = "Ошибки: " + ", ".join(errors)
                         else:
+                            board.set_fen(new_board.fen())
+                            last_move = list(uci_to_coords(move))
                             message = ""
                             waiting = True
                             threading.Thread(
                                 target=send_move,
-                                args=(move,),
+                                args=(pre_fen, pre_side, move),
                                 daemon=True,
                             ).start()
                         selected = None
