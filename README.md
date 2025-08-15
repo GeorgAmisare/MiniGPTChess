@@ -40,7 +40,7 @@ pip install -r requirements-client.txt
 ```bash
 cp .env.example .env
 # заполните OPENAI_API_KEY=<ваш ключ>
-# при необходимости укажите SERVER_URL=http://localhost:8000
+# при необходимости укажите SERVER_URL=http://<PUBLIC_IP>:<PORT>
 ```
 
 `SERVER_URL` задаёт адрес сервера. Значение можно хранить в `.env` (загружается через `python-dotenv`) или передавать при запуске.
@@ -56,23 +56,13 @@ cp .env.example .env
 uvicorn server.app:app --host 0.0.0.0 --port 8000 --env-file .env
 ```
 
-Чтобы открыть доступ из интернета, пробросьте порт через туннель:
+При обращении клиента используйте адрес `http://<PUBLIC_IP>:<PORT>`.
 
-```bash
-cloudflared tunnel --url http://localhost:8000
-```
-
-или
-
-```bash
-ngrok http 8000
-```
-
-Полученный URL передайте клиенту через `SERVER_URL`.
+Сервер настроен с поддержкой CORS, поэтому запросы можно отправлять с любого источника.
 
 #### Эндпоинты
 
-- `GET /health` — проверка работоспособности.
+- `GET /health` — проверка работоспособности (возвращает `{ "status": "ok" }`).
 - `POST /move` — применяет ход игрока и возвращает ход ИИ.
 
 Пример запроса:
@@ -127,7 +117,7 @@ ngrok http 8000
 ### Клиент
 
 ```bash
-SERVER_URL=https://<твой-URL> python client/main.py
+SERVER_URL=http://<PUBLIC_IP>:<PORT> python client/main.py
 ```
 
 Если адрес сервера указан в `.env`, достаточно выполнить `python client/main.py`.
@@ -149,7 +139,7 @@ pyinstaller --onefile --name MiniGPTChess client/main.py
 При запуске укажите URL сервера:
 
 ```bash
-SERVER_URL=https://<твой-URL> ./dist/MiniGPTChess
+SERVER_URL=http://<PUBLIC_IP>:<PORT> ./dist/MiniGPTChess
 ```
 
 ## Тестирование
