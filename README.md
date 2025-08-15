@@ -113,6 +113,17 @@ python client/main.py
 
 Клиент отображает шахматную доску в стартовой позиции и взаимодействует с сервером для обмена ходами.
 
+#### Сборка клиента
+
+Чтобы передавать игру без исходников, соберите клиент в исполняемый файл при помощи [PyInstaller](https://pyinstaller.org/):
+
+```bash
+pip install pyinstaller
+pyinstaller --onefile --name MiniGPTChess client/main.py
+```
+
+Готовый файл появится в каталоге `dist` (например, `dist/MiniGPTChess` или `MiniGPTChess.exe` на Windows). Передайте его вместе с этим каталогом и запускайте на машине, где уже работает сервер. Для получения папки с зависимостями используйте `pyinstaller --name MiniGPTChess client/main.py`; итоговая директория окажется в `dist/MiniGPTChess/`.
+
 ## Тестирование
 
 Убедитесь, что установлен `pytest` (например, `pip install pytest`).
