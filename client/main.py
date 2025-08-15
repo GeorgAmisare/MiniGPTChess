@@ -114,6 +114,38 @@ def uci_to_coords(move: str) -> tuple[tuple[int, int], tuple[int, int]]:
     return from_sq, to_sq
 
 
+def can_select_square(board: Board, row: int, col: int) -> bool:
+    """Проверить, можно ли выбрать клетку.
+
+    Разрешено выделять только клетки со своими фигурами.
+
+    Parameters
+    ----------
+    board: Board
+        Текущее состояние доски.
+    row: int
+        Номер строки клетки.
+    col: int
+        Номер столбца клетки.
+
+    Returns
+    -------
+    bool
+        True, если в клетке находится фигура текущей стороны.
+    """
+    piece = board.piece_at(row, col)
+    if not piece:
+        return False
+    return piece.isupper() if board.side == "w" else piece.islower()
+
+
+def deselect_on_right(
+    button: int, selected: tuple[int, int] | None
+) -> tuple[int, int] | None:
+    """Снять выделение при нажатии правой кнопкой мыши."""
+    return None if button == 3 else selected
+
+
 def draw_coordinates(screen: pygame.Surface) -> None:
     """Рисует буквенно-цифровую разметку внутри углов крайних клеток."""
     font = pygame.font.SysFont("DejaVu Sans", COORD_FONT_SIZE)
@@ -252,28 +284,33 @@ def main() -> None:
                 running = False
             elif (
                 event.type == pygame.MOUSEBUTTONDOWN
-                and event.button == 1
                 and not waiting
             ):
                 col = event.pos[0] // SQUARE_SIZE
                 row = event.pos[1] // SQUARE_SIZE
-                if selected is None:
-                    selected = (row, col)
-                else:
-                    move = coords_to_uci(*selected) + coords_to_uci(row, col)
-                    logger.info("Ход игрока: %s", move)
-                    _, errors = validate_and_apply_move(board.fen, move)
-                    if errors:
-                        message = "Ошибки: " + ", ".join(errors)
+                selected = deselect_on_right(event.button, selected)
+                if event.button == 1:
+                    if selected is None:
+                        if can_select_square(board, row, col):
+                            selected = (row, col)
                     else:
-                        message = ""
-                        waiting = True
-                        threading.Thread(
-                            target=send_move,
-                            args=(move,),
-                            daemon=True,
-                        ).start()
-                    selected = None
+                        move = (
+                            coords_to_uci(*selected)
+                            + coords_to_uci(row, col)
+                        )
+                        logger.info("Ход игрока: %s", move)
+                        _, errors = validate_and_apply_move(board.fen, move)
+                        if errors:
+                            message = "Ошибки: " + ", ".join(errors)
+                        else:
+                            message = ""
+                            waiting = True
+                            threading.Thread(
+                                target=send_move,
+                                args=(move,),
+                                daemon=True,
+                            ).start()
+                        selected = None
 
         draw_board(screen, board, last_move, selected)
         font = pygame.font.SysFont(None, 24)
