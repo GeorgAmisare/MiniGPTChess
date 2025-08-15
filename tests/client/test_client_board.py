@@ -13,6 +13,8 @@ from client.main import (
     SELECT_COLOR,
     WINDOW_SIZE,
     SQUARE_SIZE,
+    COORD_COLOR,
+    COORD_FONT_SIZE,
 )
 
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
@@ -24,6 +26,12 @@ def test_coords_roundtrip() -> None:
     end = (4, 4)  # e4
     move = coords_to_uci(*start) + coords_to_uci(*end)
     assert uci_to_coords(move) == (start, end)
+
+
+def test_coords_edges() -> None:
+    """Проверить преобразование крайних координат."""
+    assert coords_to_uci(7, 0) == "a1"
+    assert coords_to_uci(0, 7) == "h8"
 
 
 def test_board_piece_parsing() -> None:
@@ -56,3 +64,74 @@ def test_piece_colors() -> None:
     """Проверить выбор цвета фигур в зависимости от регистра."""
     assert get_piece_color("K") == pygame.Color("white")
     assert get_piece_color("q") == pygame.Color("black")
+
+
+def test_coordinates_positions() -> None:
+    """Убедиться, что разметка расположена в нужных углах клеток."""
+    pygame.init()
+    screen = pygame.Surface((WINDOW_SIZE, WINDOW_SIZE))
+    board = Board("8/8/8/8/8/8/8/8 w - - 0 1")
+    draw_board(screen, board)
+    # клетка a8: цифра слева сверху, буква справа сверху
+    has_rank = any(
+        screen.get_at((x, y))[:3] == COORD_COLOR
+        for x in range(COORD_FONT_SIZE)
+        for y in range(COORD_FONT_SIZE)
+    )
+    has_file = any(
+        screen.get_at((x, y))[:3] == COORD_COLOR
+        for x in range(SQUARE_SIZE - COORD_FONT_SIZE, SQUARE_SIZE)
+        for y in range(COORD_FONT_SIZE)
+    )
+    assert has_rank
+    assert has_file
+    assert not any(
+        screen.get_at((x, y))[:3] == COORD_COLOR
+        for x in range(COORD_FONT_SIZE)
+        for y in range(SQUARE_SIZE - COORD_FONT_SIZE, SQUARE_SIZE)
+    )
+    assert not any(
+        screen.get_at((x, y))[:3] == COORD_COLOR
+        for x in range(
+            SQUARE_SIZE - COORD_FONT_SIZE, SQUARE_SIZE
+        )
+        for y in range(
+            SQUARE_SIZE - COORD_FONT_SIZE, SQUARE_SIZE
+        )
+    )
+    # клетка h1: буква слева снизу, цифра справа снизу
+    has_file = any(
+        screen.get_at((x, y))[:3] == COORD_COLOR
+        for x in range(
+            WINDOW_SIZE - SQUARE_SIZE,
+            WINDOW_SIZE - SQUARE_SIZE + COORD_FONT_SIZE,
+        )
+        for y in range(WINDOW_SIZE - COORD_FONT_SIZE, WINDOW_SIZE)
+    )
+    has_rank = any(
+        screen.get_at((x, y))[:3] == COORD_COLOR
+        for x in range(WINDOW_SIZE - COORD_FONT_SIZE, WINDOW_SIZE)
+        for y in range(WINDOW_SIZE - COORD_FONT_SIZE, WINDOW_SIZE)
+    )
+    assert has_file
+    assert has_rank
+    assert not any(
+        screen.get_at((x, y))[:3] == COORD_COLOR
+        for x in range(
+            WINDOW_SIZE - SQUARE_SIZE,
+            WINDOW_SIZE - SQUARE_SIZE + COORD_FONT_SIZE,
+        )
+        for y in range(
+            WINDOW_SIZE - SQUARE_SIZE,
+            WINDOW_SIZE - SQUARE_SIZE + COORD_FONT_SIZE,
+        )
+    )
+    assert not any(
+        screen.get_at((x, y))[:3] == COORD_COLOR
+        for x in range(WINDOW_SIZE - COORD_FONT_SIZE, WINDOW_SIZE)
+        for y in range(
+            WINDOW_SIZE - SQUARE_SIZE,
+            WINDOW_SIZE - SQUARE_SIZE + COORD_FONT_SIZE,
+        )
+    )
+    pygame.quit()
