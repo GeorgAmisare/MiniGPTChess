@@ -1,5 +1,6 @@
 """Приложение FastAPI с эндпоинтом проверки состояния."""
 
+import os
 import sys
 from pathlib import Path
 
@@ -15,10 +16,17 @@ from .routes import router  # noqa: E402
 setup_logging()
 
 app = FastAPI()
+
+# Список разрешённых источников можно задать через CORS_ALLOW_ORIGINS
+_origins_env = os.getenv("CORS_ALLOW_ORIGINS")
+_allow_origins = (
+    [o.strip() for o in _origins_env.split(",")] if _origins_env else ["*"]
+)
+
 # Включаем CORS, чтобы клиент мог обращаться с другого домена
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_allow_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
