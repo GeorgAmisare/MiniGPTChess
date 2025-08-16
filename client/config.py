@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
+
 def load_env_smart() -> None:
     # A) если уже есть переменная — ничего не делаем
     if "SERVER_URL" in os.environ:
@@ -27,6 +28,7 @@ def load_env_smart() -> None:
     project_root_env = Path(__file__).resolve().parents[1] / ".env"
     if project_root_env.exists():
         load_dotenv(project_root_env, override=False)
+
 
 load_env_smart()
 
