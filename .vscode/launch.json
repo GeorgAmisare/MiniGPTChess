@@ -6,7 +6,8 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/client/main.py",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "envFile": "${workspaceFolder}/client/.env"
         },
         {
             "name": "Client Tests",
@@ -22,7 +23,7 @@
             "type": "python",
             "request": "launch",
             "module": "uvicorn",
-            "args": ["server.main:app", "--reload", "--env-file", ".env"],
+            "args": ["server.main:app", "--reload"],
             "console": "integratedTerminal"
         },
         {

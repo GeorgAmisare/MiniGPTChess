@@ -3,6 +3,7 @@
 from types import SimpleNamespace
 
 import server.app.gpt_client as gpt_client
+import importlib
 
 
 def test_invalid_response_falls_back(monkeypatch, caplog):
@@ -67,3 +68,19 @@ def test_retries_on_exception(monkeypatch):
 
     assert move == "a2a3"
     assert dummy.calls == 2
+
+
+def test_api_key_loaded_from_env(monkeypatch):
+    """OPENAI_API_KEY должен читаться из server/.env."""
+    from pathlib import Path
+
+    env_path = Path(__file__).resolve().parents[2] / "server" / ".env"
+    env_path.write_text("OPENAI_API_KEY=test\n")
+    try:
+        monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+        import server
+        importlib.reload(server)
+        importlib.reload(gpt_client)
+        assert gpt_client._api_key == "test"
+    finally:
+        env_path.unlink()

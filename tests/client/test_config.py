@@ -19,3 +19,18 @@ def test_missing_server_url_raises(monkeypatch):
     monkeypatch.delenv("SERVER_URL", raising=False)
     with pytest.raises(RuntimeError):
         importlib.reload(config)
+
+
+def test_server_url_from_file(monkeypatch):
+    """SERVER_URL должен считываться из client/.env."""
+    from pathlib import Path
+
+    env_path = Path(__file__).resolve().parents[2] / "client" / ".env"
+    env_path.write_text("SERVER_URL=http://fromfile\n")
+    try:
+        monkeypatch.delenv("SERVER_URL", raising=False)
+        import client.config as config
+        importlib.reload(config)
+        assert config.SERVER_URL == "http://fromfile"
+    finally:
+        env_path.unlink()
