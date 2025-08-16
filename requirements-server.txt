@@ -3,4 +3,5 @@ uvicorn
 python-chess
 openai
 pydantic
+python-dotenv
 
