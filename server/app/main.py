@@ -4,8 +4,12 @@ import os
 import sys
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 # Добавляем корневую директорию проекта в путь поиска модулей
 sys.path.append(str(Path(__file__).resolve().parents[2]))

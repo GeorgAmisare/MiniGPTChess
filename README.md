@@ -35,28 +35,27 @@ pip install -r requirements-client.txt
 
 ## Переменные окружения
 
-Создайте файл `.env` на основе `.env.example` и укажите ключи:
+Сервер и клиент используют отдельные файлы конфигурации. Создайте их на основе примеров:
 
 ```bash
-cp .env.example .env
-# заполните OPENAI_API_KEY=<ваш ключ>
-# обязательно укажите SERVER_URL=http://<PUBLIC_IP>:<PORT>
+cp server/.env.example server/.env
+cp client/.env.example client/.env
+# в server/.env укажите OPENAI_API_KEY=<ваш ключ>
+# в client/.env укажите SERVER_URL=http://<PUBLIC_IP>:<PORT>
 ```
 
-`SERVER_URL` задаёт адрес сервера. Значение обязательно; его можно хранить в `.env` (загружается через `python-dotenv`) или передавать при запуске.
+`SERVER_URL` задаёт адрес сервера. Его можно хранить в `client/.env` или передавать при запуске.
 
-Для включения подробных логов установите переменную окружения
-`DEBUG_LOGS=1` перед запуском клиента или сервера.
+Для включения подробных логов установите `DEBUG_LOGS=1` в нужном `.env`.
 
-Для ограничения доступа по CORS укажите `CORS_ALLOW_ORIGINS` со списком адресов
-через запятую. По умолчанию разрешены все источники.
+Для ограничения доступа по CORS укажите `CORS_ALLOW_ORIGINS` в `server/.env` со списком адресов через запятую. По умолчанию разрешены все источники.
 
 ## Запуск
 
 ### Сервер
 
 ```bash
-uvicorn server.app:app --host 0.0.0.0 --port 8000 --env-file .env
+uvicorn server.app:app --host 0.0.0.0 --port 8000
 ```
 Сервер настроен с поддержкой CORS: по умолчанию API доступен с любого домена.
 Список доменов можно ограничить переменной `CORS_ALLOW_ORIGINS`.
@@ -121,7 +120,7 @@ uvicorn server.app:app --host 0.0.0.0 --port 8000 --env-file .env
 SERVER_URL=http://<PUBLIC_IP>:<PORT> python client/main.py
 ```
 
-Если адрес сервера указан в `.env`, достаточно выполнить `python client/main.py`.
+Если адрес сервера указан в `client/.env`, достаточно выполнить `python client/main.py`.
 
 Клиент отображает шахматную доску в стартовой позиции и взаимодействует с сервером для обмена ходами.
 
@@ -136,6 +135,7 @@ pyinstaller --onefile --name MiniGPTChess client/main.py
 
 Готовый файл появится в каталоге `dist` (например, `dist/MiniGPTChess` или `MiniGPTChess.exe` на Windows). Передайте его вместе с этим каталогом и запускайте на машине, где уже работает сервер. Для получения папки с зависимостями используйте `pyinstaller --name MiniGPTChess client/main.py`; итоговая директория окажется в `dist/MiniGPTChess/`.
 
+Файл `client/.env` необходимо разместить рядом с исполняемым файлом или добавить в сборку через `--add-data client/.env:.`.
 
 При запуске укажите URL сервера:
 
